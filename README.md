@@ -1,5 +1,4 @@
 
-
 ---
 
 ```markdown
@@ -26,13 +25,13 @@ In an era of algorithmic feeds and information overload, it is difficult to find
 This project was developed as an **"Information Filter."** By combining **Generative AI** with curated RSS feeds, it empowers users to reclaim control over their information diet. It bridges the gap between **Tech Insights** and **Language Acquisition**, allowing users to learn French vocabulary in the context of real-world technology and business news.
 
 ### 中文
-在算法推荐和信息过载的时代，获取高质量、客观的新闻变得愈发困难，尤其是对于试图掌握第二外语（如法语）的学习者而言。传统聚合器往往关注“点击率”而非“信息价值”。
+在算法推荐和信息过载的时代，获取高质量、客观的新闻变得愈发困难。传统聚合器往往关注“点击率”而非“信息价值”。
 
-本项目旨在构建一个**“智能信息过滤器”**。通过结合 **生成式 AI** 与精选 RSS 源，它帮助用户重夺信息主动权。本项目打破了**科技视野**与**语言习得**之间的壁垒，让用户能够在真实的科技与商业新闻语境中，沉浸式地积累法语词汇。
+本项目旨在构建一个**“智能信息过滤器”**。通过结合 **生成式 AI** 与精选 RSS 源，它帮助用户重夺信息主动权。本项目打破了**科技视野**与**语言习得**之间的壁垒，让用户能够在真实的科技与商业新闻语境中，沉浸式地积累全球视野。
 
 ---
 
-## 🏗️ Technical Highlights / 技术亮点
+## 🏗️ Technical Architecture / 技术架构
 
 The project follows a modular design pattern emphasizing **Stability & Extensibility**:
 
@@ -74,7 +73,7 @@ Create `.env` (local) or `.streamlit/secrets.toml` (production):
 ```toml
 # API Configuration
 API_KEY = "your_llm_api_key"
-BASE_URL = "[https://api.deepseek.com](https://api.deepseek.com)"  # or OpenAI URL
+BASE_URL = "[https://api.deepseek.com](https://api.deepseek.com)"
 
 ```
 
