@@ -1,144 +1,127 @@
-好的，Maggie！为了让你的 GitHub 项目看起来更加国际化，同时方便中文招聘者（或者你自己复习）快速理解，我把这份 **README.md** 升级为了 **中英双语版 (Bilingual Version)**。
+Maggie，收到。你是对的，对比之下，**Mood Journal 的 README 结构确实吊打刚才那一版。**
 
-这种格式在 GitHub 上非常受欢迎，既展示了你的英语能力，又体现了对不同受众的体贴。
+刚才那一版虽然内容全，但排版太“像个普通的开源工具”，而 Mood Journal 那一版是**“严谨的计算机系学生作品”**——有架构分层、有设计动机、有双语对照，逻辑密度和专业感极强。
 
-你可以直接复制下面的内容覆盖你现在的 `README.md`。
+**我已经深刻反思：** 对于你（ISTJ + CS专业）来说，代码不仅仅是功能，更是逻辑的艺术品。README 必须体现出**MVC 分层思想**和**深度思考**。
+
+下面是完全复刻 Mood Journal 风格的 **Global Vision 重制版 README**。无论结构、Emoji 的使用、还是模块划分，都保持了那种“清冷、逻辑严密”的高级感。
+
+请直接覆盖你的 `README.md`：
 
 ---
 
 ```markdown
-# 🌍 Global Vision: AI-Powered News Aggregator | AI 驱动的双语新闻聚合助手
-
-![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B.svg)
-![AI](https://img.shields.io/badge/AI-Powered-green.svg)
-![Status](https://img.shields.io/badge/Status-Active-success.svg)
-
-> **"Stay informed, learn French, and escape the algorithm."**
-> **“拒绝算法喂养，在获取资讯的同时，沉浸式掌握第二外语。”**
-
-**Global Vision** is a personalized news dashboard built with Python and Streamlit. Unlike traditional aggregators, it uses **Generative AI** to read, summarize, and extract value from global RSS feeds, filtering out clickbait and noise.
-**Global Vision** 是一个基于 Python 和 Streamlit 构建的个性化新闻看板。与传统聚合器不同，它利用**生成式 AI** 实时读取、总结全球主流媒体的 RSS 信息流，自动过滤标题党和无效信息，提炼核心价值。
-
-This project was specifically designed to bridge the gap between **Tech Insights** and **French Language Learning**, making it the perfect tool for digital nomads and global citizens.
-本项目专为**科技爱好者**和**法语学习者**设计，旨在打破信息获取与语言学习之间的壁垒，是“数字游民”和“世界公民”的理想工具。
+# 🌍 Global Vision: AI-Powered News Aggregator
+> **A bilingual intelligence dashboard designed for Digital Nomads & French Learners (AI-driven).**
 
 ---
 
-## 📸 App Preview | 应用预览
+## 🏗️ System Architecture (Core Logic)
 
-![Dashboard Screenshot](preview.jpg)
+* **View Layer (`app.py`)** Streamlit-based interactive dashboard featuring dynamic sidebars, category filtering, and real-time news rendering (responsive UI).
 
----
+* **Service Layer (`ai_agent.py`)** Integrated with LLM (DeepSeek/OpenAI) to perform context-aware summarization, "clickbait" filtering, and linguistic extraction (French-Chinese mapping).
 
-## ✨ Key Features | 核心功能
-
-### 🤖 1. AI-Driven Intelligence (AI 智能情报分析)
-- **Smart Summarization**: Compresses lengthy articles into 50-80 word core insights using LLM.
-  - **智能摘要**：利用大模型将长篇大论压缩为 50-80 字的硬核干货。
-- **Contextual Analysis**: AI generates "Discussion Points" to spark critical thinking.
-  - **深度洞察**：AI 生成“问题切入点”，激发批判性思维，拒绝被动阅读。
-- **Tagging System**: Automatically categorizes news (e.g., #AIRevolution, #Geopolitics).
-  - **自动标签**：自动提取新闻分类与核心关键词。
-
-### 🇫🇷 2. Immersive French Learning (沉浸式法语学习)
-- **Dual-Track Tech News (双轨制科技阅读)**:
-  - *Le Monde Pixels* for digital culture & ethics (数字人文与伦理).
-  - *Journal du Geek* for consumer tech & trends (消费电子与前沿趋势).
-- **"Mot du Jour" (Word of the Day / 每日一词)**: 
-  - The AI automatically identifies key French terms (nouns/verbs) from the news context and provides definitions, turning reading into a learning session.
-  - **语境单词提取**：AI 自动识别新闻中的核心法语术语（优先名词/动词），并生成中文解释，实现“在读新闻中背单词”。
-
-### 🛡️ 3. Robust Engineering (硬核工程实现)
-- **Anti-Crawler Bypass**: Implements custom `User-Agent` headers and session handling to successfully fetch data from strict media sources (e.g., *Les Echos*, *HuffPost*).
-  - **反爬虫突破**：通过自定义请求头伪装和会话管理，成功抓取 *Les Echos* 等高防护媒体源的数据。
-- **Dynamic Configuration**: Modular design allows easy addition of new RSS sources via `config.py`.
-  - **动态配置**：模块化设计，只需修改配置文件即可一键添加新的 RSS 数据源。
+* **Data Layer (`data_fetcher.py`, `config.py`)** Handles RSS stream ingestion, anti-crawler strategy implementation (User-Agent spoofing), and modular source configuration.
 
 ---
 
-## 🛠️ Tech Stack | 技术栈
+## 🌟 Project Motivation / 项目动机
 
-- **Frontend**: [Streamlit](https://streamlit.io/) (Interactive UI / 交互式前端)
-- **Backend**: Python 3.x
-- **Data Fetching**: `feedparser`, `requests` (Handling Anti-scraping / 处理反爬策略)
-- **AI Integration**: OpenAI / DeepSeek API (Prompt Engineering / 提示词工程)
-- **Version Control**: Git & GitHub
+### English
+In an era of algorithmic feeds and information overload, it is difficult to find high-quality, objective news sources, especially for those trying to master a second language (e.g., French). Traditional news aggregators focus on "engagement" rather than "value."
+
+This project was developed as an **"Information Filter."** By combining **Generative AI** with curated RSS feeds, it empowers users to reclaim control over their information diet. It bridges the gap between **Tech Insights** and **Language Acquisition**, allowing users to learn French vocabulary in the context of real-world technology and business news.
+
+### 中文
+在算法推荐和信息过载的时代，获取高质量、客观的新闻变得愈发困难，尤其是对于试图掌握第二外语（如法语）的学习者而言。传统聚合器往往关注“点击率”而非“信息价值”。
+
+本项目旨在构建一个**“智能信息过滤器”**。通过结合 **生成式 AI** 与精选 RSS 源，它帮助用户重夺信息主动权。本项目打破了**科技视野**与**语言习得**之间的壁垒，让用户能够在真实的科技与商业新闻语境中，沉浸式地积累法语词汇。
 
 ---
 
-## 🚀 Quick Start | 快速开始
+## 🏗️ Technical Highlights / 技术亮点
 
-### Prerequisites (前置要求)
-- Python 3.8+
-- An API Key (OpenAI compatible)
+The project follows a modular design pattern emphasizing **Stability & Extensibility**:
 
-### Installation (安装步骤)
+* **Anti-Crawler Mechanism (`data_fetcher.py`)** Implements custom headers and session handling to bypass strict anti-scraping measures from top-tier media (e.g., *Les Echos*, *HuffPost*).
 
-1. **Clone the repository (克隆仓库)**
-   ```bash
-   git clone [https://github.com/maggiecycy/Global-Vision-AI.git](https://github.com/maggiecycy/Global-Vision-AI.git)
-   cd Global-Vision-AI
+* **Prompt Engineering (`config.py`)** Uses structured System Prompts to enforce JSON output, ensuring strict data formatting for downstream UI rendering.
 
-```
+* **State Management** Streamlit session state is optimized to reduce redundant API calls during user interaction.
 
-2. **Install dependencies (安装依赖)**
+---
+
+## ✨ Key Features / 功能说明
+
+* **AI-Driven Summarization** Compresses lengthy articles into 50-80 word core insights, removing noise and fluff.
+
+* **Contextual French Learning (Mot du Jour)** Automatically identifies key French terms (nouns/verbs) from the news context and provides definitions.
+
+* **Dual-Track Tech News** Segregates content into "Hard Tech" (*Journal du Geek*) and "Digital Culture" (*Le Monde Pixels*) for targeted reading.
+
+* **Privacy-First Design** No local database required; all processing happens in-memory with secure API key management via Streamlit Secrets.
+
+---
+
+## 🚀 Quick Start / 快速启动指南
+
+### 1. Installation / 安装
+
 ```bash
+git clone [https://github.com/maggiecycy/Global-Vision-AI.git](https://github.com/maggiecycy/Global-Vision-AI.git)
+cd Global-Vision-AI
 pip install -r requirements.txt
 
 ```
 
+### 2. Configuration / 配置
 
-3. **Configure Environment (配置环境)**
-Create a `.env` file in the root directory to keep your keys safe:
-在根目录新建 `.env` 文件以保护你的密钥安全：
-```env
-# .env
-API_KEY=your_api_key_here
-BASE_URL=your_api_base_url
+Create `.env` (local) or `.streamlit/secrets.toml` (production):
+
+```toml
+# API Configuration
+API_KEY = "your_llm_api_key"
+BASE_URL = "[https://api.deepseek.com](https://api.deepseek.com)"  # or OpenAI URL
 
 ```
 
+### 3. Run / 运行
 
-4. **Run the App (运行应用)**
 ```bash
 streamlit run app.py
 
 ```
 
+---
 
+## 🧭 Roadmap / 未来规划
+
+* **User Mood Tracking** Recommend news based on the user's current emotional state (integrating logic from *Mood Journal*).
+* **Anki Integration** One-click export of "Mot du Jour" vocabulary to Anki flashcards.
+* **Multi-Language Support** Expanding to German and Italian sources (EU-oriented).
 
 ---
 
-## 📂 Project Structure | 项目结构
+## 🧑‍💻 Author
 
-```text
-Global-Vision-AI/
-├── app.py              # Main application entry point (前端 UI 逻辑)
-├── data_fetcher.py     # RSS fetching & Anti-crawler (爬虫与反爬处理)
-├── ai_agent.py         # AI processing & Prompt Engineering (AI 智能体)
-├── config.py           # Configuration (RSS源与系统提示词配置)
-├── requirements.txt    # Python dependencies (依赖列表)
-└── README.md           # Documentation (项目文档)
+**Maggie Cao**
+
+* Computer Science @ Beijing Technology and Business University
+* ISTJ | CS Student & Aspiring AI Developer
+
+**Focus Areas**
+
+* **Full-Stack AI Application** (Streamlit + LLM)
+* **Cross-Cultural Tech** & Language Learning Tools
+* **System Architecture** & Data Engineering
+
+---
+
+## 🛡️ License
+
+MIT License
 
 ```
 
-## 🔮 Future Roadmap | 未来规划
-
-* [ ] **User Mood Tracking**: Recommend news based on the user's current emotional state. (基于情绪的新闻推荐)
-* [ ] **Anki Integration**: One-click export of "Mot du Jour" to Anki flashcards. (一键导出单词到 Anki)
-* [ ] **Multi-Language Support**: Expanding to German and Italian sources. (扩展德语和意大利语源)
-
-## 👩‍💻 Author | 作者
-
-**Maggie (Cao Yan)**
-*CS Major | Aspiring Global Citizen*
-*计算机专业大二学生 | 准数字游民*
-
----
-
-*Built with ❤️, Python, and a lot of coffee.*
-
 ```
-
----
