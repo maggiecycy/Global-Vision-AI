@@ -1,7 +1,4 @@
 
----
-
-```markdown
 # 🌍 Global Vision: AI-Powered News Aggregator
 > **A bilingual intelligence dashboard designed for Digital Nomads & French Learners (AI-driven).**
 
