@@ -19,3 +19,14 @@ env/
 # IDE 配置文件 (个人设置不上传)
 .vscode/
 .idea/
+# AI Context
+.cobridge/
+
+# .traerules
+.traerules
+
+# .cursorrules
+.cursorrules
+
+# GitHub Copilot Instructions
+.github/copilot-instructions.md

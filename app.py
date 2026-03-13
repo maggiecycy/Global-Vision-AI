@@ -63,7 +63,8 @@ if start_btn:
 
             ai_result = ai_agent.process_news_with_ai(title_en, snippet)
             
-            expander_title = f"{ai_result['title_zh']} | {title_en}"
+            title_zh = ai_result.get("title_zh") or "AI 暂未生成标题"
+            expander_title = f"{title_zh} | {title_en}"
             
             with st.expander(expander_title, expanded=True):
                 col1, col2 = st.columns([7, 3])
@@ -75,12 +76,12 @@ if start_btn:
                     
                     if ai_result.get('keywords'):
                         # 把关键词列表变成字符串
-                        kws = " ".join([f"#{k}" for k in ai_result['keywords']])
+                        kws = " ".join([f"#{k}" for k in ai_result.get('keywords', [])])
                         tags_html += f"<span style='color:#666; font-size:12px;'>{kws}</span>"
                     
                     st.markdown(tags_html, unsafe_allow_html=True)
 
-                    st.markdown(f"**📝 核心摘要：** {ai_result['summary_zh']}")
+                    st.markdown(f"**📝 核心摘要：** {ai_result.get('summary_zh') or 'AI 暂未生成摘要'}")
                     if ai_result.get('discussion_point'):
                         st.markdown(f"""
                         <div class="discussion-box">
@@ -88,16 +89,14 @@ if start_btn:
                         </div>
                         """, unsafe_allow_html=True)
 
-                        # 新增：法语每日一词
-                        if ai_result.get('french_learning'):
-                            fr = ai_result['french_learning']
-                            # 如果 AI 还是偶尔犯傻返回了空数据，做个双重检查
-                            if fr and fr.get('key_term'):
-                                st.markdown(f"""
-                                <div style="margin-top: 8px; font-size: 13px; color: #2c3e50; background-color: #e8f4f8; padding: 5px 10px; border-radius: 4px; display: inline-block;">
-                                    🇫🇷 <b>每日一词：</b>{fr['key_term']} <span style="color:#888; margin-left:5px;">({fr['meaning']})</span>
-                                </div>
-                                """, unsafe_allow_html=True)
+                    # 法语每日一词（不依赖 discussion_point 是否存在）
+                    fr = ai_result.get('french_learning')
+                    if fr and isinstance(fr, dict) and fr.get('key_term'):
+                        st.markdown(f"""
+                        <div style="margin-top: 8px; font-size: 13px; color: #2c3e50; background-color: #e8f4f8; padding: 5px 10px; border-radius: 4px; display: inline-block;">
+                            🇫🇷 <b>每日一词：</b>{fr.get('key_term', '')} <span style="color:#888; margin-left:5px;">({fr.get('meaning', '')})</span>
+                        </div>
+                        """, unsafe_allow_html=True)
                 
                 with col2:
                     st.caption(f"📅 {date}") 

@@ -2,23 +2,26 @@
 
 # 1. RSS 源配置 
 RSS_URLS = {
-    "全球 (World)": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
-    "美国 (U.S.)": "https://rss.nytimes.com/services/xml/rss/nyt/US.xml",
-    "商业 (Business)": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
-    "科技 (Tech)": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
-    "科学 (Science)": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
-    "健康 (Health)": "https://rss.nytimes.com/services/xml/rss/nyt/Health.xml",
-    "体育 (Sports)": "https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml",
-    "艺术 (Arts)": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",
-    "时尚 (Fashion)": "https://rss.nytimes.com/services/xml/rss/nyt/FashionandStyle.xml",
-    "旅游 (Travel)": "https://rss.nytimes.com/services/xml/rss/nyt/Travel.xml",
-    # --- 🇫🇷 法语源 (新增) ---
-    "法·头条 (Le Monde Une)": "https://www.lemonde.fr/rss/une.xml",
-    "法·科技 (Le Monde Pixels)": "https://www.lemonde.fr/pixels/rss_full.xml",
-    "法·极客 (J d Geek)": "https://www.journaldugeek.com/feed/",
-    "法·商业 (BFM Eco)": "https://www.bfmtv.com/rss/economie/",
-    "法·国际 (France 24)": "https://www.france24.com/fr/rss",
-    "法·文化 (20 Minutes)": "https://www.20minutes.fr/feeds/rss-culture.xml"
+    # The Guardian 对爬虫非常友好，且无需订阅即可读取全文 HTML
+    "全球 (World)": "https://www.theguardian.com/world/rss",
+    "美国 (U.S.)": "https://www.theguardian.com/us-news/rss",
+    "商业 (Business)": "https://www.cnbc.com/id/10001147/device/rss/rss.html",  # CNBC 商业新闻完全免费
+    "科技 (Tech)": "https://www.theguardian.com/technology/rss",  # 或者是 TechCrunch: https://techcrunch.com/feed/
+    "科学 (Science)": "https://www.theguardian.com/science/rss",
+    "健康 (Health)": "http://rss.cnn.com/rss/cnn_health.rss",  # CNN 健康板块也是免费的
+    "体育 (Sports)": "https://www.theguardian.com/sport/rss",
+    "艺术 (Arts)": "https://www.theguardian.com/artanddesign/rss",
+    "时尚 (Fashion)": "https://www.theguardian.com/fashion/rss",
+    "旅游 (Travel)": "https://www.theguardian.com/travel/rss",
+
+    # --- 🇫🇷 法语源 (已替换为免费源) ---
+    # Le Monde 是强付费墙，替换为 France Info (公立免费) 和其他垂直免费站
+    "法·头条 (France Info)": "https://www.francetvinfo.fr/titres.rss",   # 替换了 Le Monde Une
+    "法·科技 (Numerama)": "https://www.numerama.com/feed/",             # 替换了 Le Monde Pixels，Numerama 是法国顶级免费科技媒
+    "法·极客 (J d Geek)": "https://www.journaldugeek.com/feed/",        # 保持不变，本来就免费
+    "法·商业 (BFM Eco)": "https://www.bfmtv.com/rss/economie/",         # 保持不变，BFM 免费
+    "法·国际 (France 24)": "https://www.france24.com/fr/rss",           # 保持不变，公立免费
+    "法·文化 (20 Minutes)": "https://www.20minutes.fr/feeds/rss-culture.xml" # 保持不变，免费
 }
 
 # 2. 代理配置
