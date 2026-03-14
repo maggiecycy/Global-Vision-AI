@@ -1,10 +1,7 @@
 from datetime import datetime
-
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.db.base import Base
-
 
 class Article(Base):
     __tablename__ = "articles"
@@ -21,4 +18,3 @@ class Article(Base):
 
     source = relationship("Source", back_populates="articles")
     ai_result = relationship("AIResult", back_populates="article", uselist=False)
-
