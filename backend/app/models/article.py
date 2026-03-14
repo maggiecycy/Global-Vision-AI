@@ -16,7 +16,7 @@ class Article(Base):
     snippet: Mapped[str] = mapped_column(Text, nullable=False)
     url: Mapped[str] = mapped_column(String(2048), nullable=False, unique=True, index=True)
 
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     source = relationship("Source", back_populates="articles")

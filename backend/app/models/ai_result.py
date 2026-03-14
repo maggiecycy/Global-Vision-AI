@@ -22,9 +22,9 @@ class AIResult(Base):
     summary_zh: Mapped[str] = mapped_column(Text, nullable=False)
 
     # PostgreSQL native array is convenient for tags/keywords.
-    keywords: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
+    keywords: Mapped[list[str]] = mapped_column(ARRAY(String(64)), nullable=False, default=list)
 
-    category_tag: Mapped[str] = mapped_column(String(128), nullable=False, default="")
+    category_tag: Mapped[str] = mapped_column(String(128), nullable=False, default="", index=True)
     discussion_point: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     french_key_term: Mapped[str | None] = mapped_column(String(128), nullable=True)
