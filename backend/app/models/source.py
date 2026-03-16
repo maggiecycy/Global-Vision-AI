@@ -19,5 +19,8 @@ class Source(Base):
 
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    # Step 9: 容错管理，抓取失败 +1，成功则重置为 0
+    failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
     articles = relationship("Article", back_populates="source")
 
