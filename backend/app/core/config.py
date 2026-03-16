@@ -15,14 +15,24 @@ class Settings(BaseModel):
     # 以后如果你有其他密钥，也在这里添加
 
 
-# --- Step 11: 卫报专用精准看板 - 仅卫报频道 ---
+# --- Final Source Update: 黄金清单 RSS 源 ---
 RSS_SOURCES = [
-    {"name": "The Guardian", "category": "World", "url": "https://www.theguardian.com/world/rss", "language": "en"},
-    {"name": "The Guardian", "category": "Politics", "url": "https://www.theguardian.com/politics/rss", "language": "en"},
-    {"name": "The Guardian", "category": "Technology", "url": "https://www.theguardian.com/technology/rss", "language": "en"},
-    {"name": "The Guardian", "category": "Science", "url": "https://www.theguardian.com/science/rss", "language": "en"},
-    {"name": "The Guardian", "category": "Environment", "url": "https://www.theguardian.com/environment/rss", "language": "en"},
-    {"name": "The Guardian", "category": "Football", "url": "https://www.theguardian.com/football/rss", "language": "en"},
+    # --- 🇬🇧 The Guardian (English - 极简/高质量) ---
+    {"name": "The Guardian", "url": "https://www.theguardian.com/world/rss", "language": "en", "category": "World"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/us-news/rss", "language": "en", "category": "U.S."},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/technology/rss", "language": "en", "category": "Tech"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/science/rss", "language": "en", "category": "Science"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/sport/rss", "language": "en", "category": "Sports"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/fashion/rss", "language": "en", "category": "Fashion"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/travel/rss", "language": "en", "category": "Travel"},
+
+    # --- 🇫🇷 French Sources (法语进修 - 免费/精准) ---
+    {"name": "France Info", "url": "https://www.francetvinfo.fr/titres.rss", "language": "fr", "category": "World"},
+    {"name": "Numerama", "url": "https://www.numerama.com/feed/", "language": "fr", "category": "Tech"},
+    {"name": "France 24", "url": "https://www.france24.com/fr/rss", "language": "fr", "category": "World"},
+    {"name": "BFM Business", "url": "https://www.bfmtv.com/rss/economie/", "language": "fr", "category": "Business"},
+    {"name": "Journal du Geek", "url": "https://www.journaldugeek.com/feed/", "language": "fr", "category": "Tech"},
+    {"name": "20 Minutes", "url": "https://www.20minutes.fr/feeds/rss-culture.xml", "language": "fr", "category": "Arts"},
 ]
 
 settings = Settings()
