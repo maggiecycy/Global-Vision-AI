@@ -13,6 +13,13 @@ class Settings(BaseModel):
     DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY", "")
     
     # 以后如果你有其他密钥，也在这里添加
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASS: str = os.getenv("SMTP_PASS", "")
+    SMTP_USE_TLS: bool = os.getenv("SMTP_USE_TLS", "true").lower() in {"1", "true", "yes", "y"}
+
+    RECEIVER_EMAIL: str = os.getenv("RECEIVER_EMAIL", "")
 
 
 # --- Final Source Update: 黄金清单 RSS 源 ---

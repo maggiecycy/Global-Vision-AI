@@ -7,6 +7,7 @@ from app.worker.tasks import (
     ping_task,
     real_scrape_task,
     clear_and_real_scrape_task,
+    send_daily_digest_task,
 )
 
 router = APIRouter()
@@ -80,6 +81,27 @@ def trigger_clear_and_real_scrape(limit: int = 15) -> dict:
         return {
             "task_id": async_result.id,
             "status": "Clear + real scrape task accepted",
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to enqueue task: {str(e)}"
+        )
+
+
+@router.post(
+    "/test-email",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def trigger_test_email() -> dict:
+    """
+    触发一次邮件发送测试（发送最近 12 小时简报）。
+    """
+    try:
+        async_result = send_daily_digest_task.delay()
+        return {
+            "task_id": async_result.id,
+            "status": "Test email task accepted",
         }
     except Exception as e:
         raise HTTPException(

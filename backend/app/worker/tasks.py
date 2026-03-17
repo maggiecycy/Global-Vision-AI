@@ -1,12 +1,16 @@
 import time
 import asyncio
 import random
+from datetime import datetime, timedelta, timezone
 from app.core.celery_app import celery_app
 from app.core.config import RSS_SOURCES
 from app.db.session import SessionLocal
 from app.models import Article, AIResult, Source
 from app.services.scraper import ScraperService
 from app.services.ai_service import AIService
+from app.services.email_service import send_brief_email
+from app.core.config import settings
+from sqlalchemy.orm import joinedload
 
 # --- 诊断工具 ---
 @celery_app.task(name="app.worker.tasks.ping_task")
@@ -99,6 +103,7 @@ def _run_scrape(db, selected_categories: list | None = None):
             db.refresh(new_article)
 
             try:
+                print(f"🧠 Processing [{new_article.title_en}]...")
                 analysis = asyncio.run(AIService.analyze_article(new_article.title_en, new_article.snippet))
                 category_raw = analysis.get('category') or ''
                 category_tag = (category_raw.strip() or '未分类') if isinstance(category_raw, str) else '未分类'
@@ -133,7 +138,7 @@ def _run_scrape(db, selected_categories: list | None = None):
                 processed_count += 1
                 print(f"✅ Article {new_article.id} ({rss_config['name']}) analyzed and saved!")
             except Exception as ai_err:
-                print(f"⚠️ AI Saving Error: {ai_err}")
+                print(f"⚠️ AI Saving Error (article_id={new_article.id}, url={new_article.url}): {repr(ai_err)}")
                 db.rollback()
                 continue
 
@@ -188,3 +193,47 @@ def clear_and_real_scrape_task(limit: int = 15):
         raise e
     finally:
         db2.close()
+
+
+@celery_app.task(name="app.worker.tasks.send_daily_digest_task")
+def send_daily_digest_task() -> str:
+    """
+    每 12 小时发送一次简报邮件：
+    - 查询过去 12 小时内最新 20 条 Article
+    - 需要包含 ai_result + source 关联数据
+    - 发送至 settings.RECEIVER_EMAIL
+    """
+    if not settings.RECEIVER_EMAIL:
+        raise RuntimeError("RECEIVER_EMAIL is not configured")
+
+    db = SessionLocal()
+    try:
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=12)
+        q = (
+            db.query(Article)
+            .options(joinedload(Article.ai_result), joinedload(Article.source))
+            .filter(Article.created_at >= cutoff)
+            .order_by(Article.created_at.desc())
+            .limit(20)
+        )
+        articles = q.all()
+
+        items: list[dict] = []
+        for a in articles:
+            src_name = (a.source.name if a.source else "Unknown Source")
+            cat = (a.ai_result.category_tag if a.ai_result else "Uncategorized")
+            summary = (a.ai_result.summary_zh if a.ai_result else "（无 AI 简报）")
+            items.append(
+                {
+                    "title": a.title_en,
+                    "summary": summary,
+                    "url": a.url,
+                    "meta": f"{src_name} · {cat}",
+                }
+            )
+
+        subject = f"Global Vision Digest · {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        send_brief_email(settings.RECEIVER_EMAIL, subject, items=items)
+        return f"✅ Email sent to {settings.RECEIVER_EMAIL} with {len(articles)} articles"
+    finally:
+        db.close()
