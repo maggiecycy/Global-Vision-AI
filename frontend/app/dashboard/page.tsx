@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { apiGet } from "@/lib/api";
-import SentimentChart, { SentimentDataPoint } from "@/components/SentimentChart";
+import { apiGet, apiRequest } from "@/lib/api";
 import CategorySelector from "@/components/CategorySelector";
 
 interface Article {
   id: number;
   title_en: string;
+  snippet?: string;
   url?: string;
   created_at: string;
   published_at?: string | null;
@@ -20,15 +20,10 @@ interface Article {
     sentiment_score?: number | null;
   };
 }
-
-const MOCK_SENTIMENT_DATA: SentimentDataPoint[] = [
-  { date: "03/10", score: 5.2 },
-  { date: "03/11", score: 6.1 },
-  { date: "03/12", score: 5.8 },
-  { date: "03/13", score: 5.5 },
-  { date: "03/14", score: 6.3 },
-  { date: "03/15", score: 5.9 },
-];
+interface KeywordItem {
+  text: string;
+  value: number;
+}
 
 const formatTime = (isoString: string) => {
   if (!isoString) return "";
@@ -80,6 +75,12 @@ export default function DashboardPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailMsg, setEmailMsg] = useState<string | null>(null);
+  const [keywords, setKeywords] = useState<KeywordItem[]>([]);
+  const [kwLoading, setKwLoading] = useState(false);
+  const [kwError, setKwError] = useState<string | null>(null);
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,37 +105,75 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const sentimentChartData = useMemo((): SentimentDataPoint[] => {
-    if (!articles.length) return MOCK_SENTIMENT_DATA;
-    const byDate: Record<string, { sum: number; count: number }> = {};
-    for (const a of articles) {
-      const score = a.ai_result?.sentiment_score;
-      if (score == null || score < 1 || score > 10) continue;
-      const dateStr = a.published_at
-        ? new Date(a.published_at).toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" })
-        : new Date(a.created_at).toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" });
-      if (!byDate[dateStr]) byDate[dateStr] = { sum: 0, count: 0 };
-      byDate[dateStr].sum += score;
-      byDate[dateStr].count += 1;
+  useEffect(() => {
+    let cancelled = false;
+    setKwLoading(true);
+    setKwError(null);
+    apiGet<KeywordItem[]>("articles/keywords")
+      .then((data) => {
+        if (!cancelled) setKeywords(Array.isArray(data) ? data : []);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setKwError(e.message ?? "关键词请求失败");
+      })
+      .finally(() => {
+        if (!cancelled) setKwLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filteredArticles = useMemo(() => {
+    if (!selectedKeyword) return articles;
+    const kw = selectedKeyword.toLowerCase();
+    return articles.filter((a) => {
+      const hay = `${a.title_en ?? ""} ${a.snippet ?? ""} ${(a.ai_result?.summary_zh ?? "")}`.toLowerCase();
+      return hay.includes(kw);
+    });
+  }, [articles, selectedKeyword]);
+
+  const kwStats = useMemo(() => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (const k of keywords) {
+      if (typeof k.value !== "number") continue;
+      min = Math.min(min, k.value);
+      max = Math.max(max, k.value);
     }
-    const points = Object.entries(byDate).map(([date, { sum, count }]) => ({
-      date,
-      score: Math.round((sum / count) * 10) / 10,
-      count,
-    }));
-    if (points.length === 0) return MOCK_SENTIMENT_DATA;
-    points.sort((a, b) => a.date.localeCompare(b.date));
-    return points;
-  }, [articles]);
+    if (!isFinite(min) || !isFinite(max)) return { min: 0, max: 0 };
+    return { min, max };
+  }, [keywords]);
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 p-8 md:p-16 font-sans">
       <header className="mb-8 border-b border-zinc-200 pb-6 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-light tracking-tight">卫报精准看板</h1>
+          <h1 className="text-2xl font-extralight tracking-tight">卫报精准看板</h1>
           <p className="text-zinc-500 mt-2 text-sm tracking-wide">The Guardian / AI Briefing</p>
         </div>
-        <div className="text-sm text-zinc-400 font-mono">Live Data Sync</div>
+        <div className="flex items-center gap-3">
+          {emailMsg && (
+            <span className="text-xs text-zinc-500">{emailMsg}</span>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setEmailMsg(null);
+              setEmailSending(true);
+              apiRequest<{ task_id: string }>("tasks/test-email", { method: "POST" })
+                .then((d) => setEmailMsg(`已触发邮件任务：${d?.task_id ?? ""}`))
+                .catch((e: Error) => setEmailMsg(e.message ?? "邮件触发失败"))
+                .finally(() => setEmailSending(false));
+            }}
+            disabled={emailSending}
+            className="text-xs px-3 py-1.5 rounded border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            title="触发一次邮件发送测试（异步任务）"
+          >
+            {emailSending ? "邮件测试中..." : "邮件测试"}
+          </button>
+          <div className="text-sm text-zinc-400 font-mono">Live Data Sync</div>
+        </div>
       </header>
 
       <div className="mb-8">
@@ -142,13 +181,63 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-        <div className="lg:col-span-4">
-          <div className="bg-white p-4 border border-zinc-200 rounded-lg shadow-sm">
-            <h2 className="text-xs uppercase tracking-widest text-zinc-500 mb-2">情绪趋势（辅助参考）</h2>
-            <SentimentChart data={sentimentChartData} height={180} />
+        <div className="lg:col-span-12">
+          <div className="bg-white p-6 border border-zinc-200 rounded-lg shadow-sm font-serif">
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <h2 className="text-xs uppercase tracking-widest text-zinc-500">关键词云（过去 24 小时）</h2>
+              <div className="flex items-center gap-2">
+                {selectedKeyword && (
+                  <>
+                    <span className="text-xs text-zinc-600">
+                      筛选：<span className="font-semibold text-zinc-900">{selectedKeyword}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedKeyword(null)}
+                      className="text-xs px-2 py-1 rounded border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700"
+                    >
+                      清除
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {kwLoading && <p className="text-zinc-500 text-sm">加载关键词...</p>}
+            {!kwLoading && kwError && (
+              <p className="text-red-600 text-sm">{kwError}</p>
+            )}
+            {!kwLoading && !kwError && keywords.length === 0 && (
+              <p className="text-zinc-500 text-sm">暂无关键词数据</p>
+            )}
+            {!kwLoading && !kwError && keywords.length > 0 && (
+              <div className="flex flex-wrap gap-3 md:gap-4">
+                {keywords.map((k) => {
+                  const range = Math.max(1, kwStats.max - kwStats.min);
+                  const t = (k.value - kwStats.min) / range;
+                  const fontSize = Math.round(12 + t * 18); // 12-30px
+                  const isActive = selectedKeyword === k.text;
+                  return (
+                    <button
+                      key={k.text}
+                      type="button"
+                      onClick={() => setSelectedKeyword((prev) => (prev === k.text ? null : k.text))}
+                      className={[
+                        "px-2.5 py-1.5 rounded border transition-transform",
+                        "hover:scale-[1.03] active:scale-[0.99]",
+                        isActive ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-500",
+                      ].join(" ")}
+                      style={{ fontSize }}
+                      title={`value=${k.value}`}
+                    >
+                      {k.text}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
-        <div className="lg:col-span-8" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -185,15 +274,15 @@ export default function DashboardPage() {
             </p>
           )}
 
-          {!loading && !error && articles.length === 0 && (
+          {!loading && !error && filteredArticles.length === 0 && (
             <p className="text-zinc-500 italic text-sm p-4 bg-white border border-zinc-200 rounded-lg">
-              暂无数据，请在上方选择卫报频道并开始抓取。
+              暂无数据{selectedKeyword ? "（或当前关键词筛选无结果）" : ""}，请在上方选择频道并开始抓取。
             </p>
           )}
 
-          {!loading && !error && articles.length > 0 && (
+          {!loading && !error && filteredArticles.length > 0 && (
             <div className="space-y-4">
-              {articles.map((article) => (
+              {filteredArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
             </div>

@@ -82,20 +82,26 @@ export default function CategorySelector({ onTaskAccepted }: CategorySelectorPro
               勾选要抓取的频道（每频道最新 1 条）
             </span>
             <div className="flex flex-wrap gap-3">
-              {categories.map((cat) => (
-                <label
-                  key={cat}
-                  className="inline-flex items-center gap-1.5 text-sm cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(cat)}
-                    onChange={() => toggleCategory(cat)}
-                    className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-zinc-700">{cat}</span>
-                </label>
-              ))}
+              {categories.map((cat) => {
+                const active = selectedCategories.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => toggleCategory(cat)}
+                    className={[
+                      "px-3 py-1.5 rounded-md border text-sm transition-transform",
+                      "hover:scale-[1.03] active:scale-[0.99]",
+                      active
+                        ? "bg-zinc-900 text-white border-zinc-900"
+                        : "bg-white text-zinc-800 border-zinc-300 hover:border-zinc-500",
+                    ].join(" ")}
+                    aria-pressed={active}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
           {error && (

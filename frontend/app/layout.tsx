@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Global Vision AI",
-  description: "AI-powered news sentiment engine",
+  description: "Personalized multilingual news digest system",
 };
 
 export default function RootLayout({

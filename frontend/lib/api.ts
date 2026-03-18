@@ -15,18 +15,34 @@ interface ApiErrorDetail {
   detail?: string | { msg?: string; message?: string }[];
 }
 
+const REQUEST_TIMEOUT_MS = 15000;
+
 /**
- * 统一请求封装：检查 res.ok，失败时解析 detail 并抛出自定义 Error
+ * 统一请求封装：检查 res.ok，失败时解析 detail 并抛出自定义 Error；超时防止一直加载
  */
 export async function apiRequest<T = unknown>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
   const url = path.startsWith("http") ? path : `${BASE_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-  const res = await fetch(url, {
-    ...options,
-    headers: { ...DEFAULT_HEADERS, ...options.headers },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers: { ...DEFAULT_HEADERS, ...options.headers },
+      signal: controller.signal,
+    });
+  } catch (e) {
+    clearTimeout(timeoutId);
+    if (e instanceof Error) {
+      if (e.name === "AbortError") throw new Error("请求超时，请确认后端已启动（如 uvicorn）");
+      throw new Error(e.message || "网络请求失败，请检查后端地址与 CORS");
+    }
+    throw e;
+  }
+  clearTimeout(timeoutId);
 
   if (!res.ok) {
     let message = `Request failed: ${res.status} ${res.statusText}`;

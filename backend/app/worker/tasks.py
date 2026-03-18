@@ -237,3 +237,34 @@ def send_daily_digest_task() -> str:
         return f"✅ Email sent to {settings.RECEIVER_EMAIL} with {len(articles)} articles"
     finally:
         db.close()
+
+
+@celery_app.task(name="app.worker.tasks.cleanup_old_articles_task")
+def cleanup_old_articles_task() -> str:
+    """
+    数据保留策略：删除 created_at 早于 7 天前的 Article（及关联 AIResult）。
+    """
+    print("[Cleanup] Checking for articles older than 7 days...")
+    db = SessionLocal()
+    try:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+        old_articles = db.query(Article).filter(Article.created_at < cutoff).all()
+        old_ids = [a.id for a in old_articles]
+        count = len(old_ids)
+
+        if count == 0:
+            print("[Cleanup] No old articles to remove.")
+            return "✅ No old articles to clean up."
+
+        # 先删关联 AIResult（保证无 cascade 时也能安全删除）
+        deleted_ai = db.query(AIResult).filter(AIResult.article_id.in_(old_ids)).delete(synchronize_session=False)
+        db.query(Article).filter(Article.id.in_(old_ids)).delete(synchronize_session=False)
+        db.commit()
+        print(f"[Cleanup] Successfully cleaned up {count} old articles (and {deleted_ai} AI results).")
+        return f"✅ Successfully cleaned up {count} old articles."
+    except Exception as e:
+        db.rollback()
+        print(f"[Cleanup] ERROR: {e}")
+        raise e
+    finally:
+        db.close()
