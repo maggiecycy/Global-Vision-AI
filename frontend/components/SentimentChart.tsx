@@ -42,7 +42,8 @@ export default function SentimentChart({ data, height = 260 }: SentimentChartPro
             borderRadius: "8px",
             color: "#fafafa",
           }}
-          formatter={(value: number) => [`${value.toFixed(1)}`, "情绪分值"]}
+          // Recharts 的 Tooltip value 可能为 undefined，避免严格注解导致构建失败
+          formatter={(value) => [typeof value === "number" ? value.toFixed(1) : String(value ?? ""), "情绪分值"]}
           labelFormatter={(label) => `日期: ${label}`}
         />
         <Legend />

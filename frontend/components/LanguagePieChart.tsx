@@ -39,7 +39,8 @@ export default function LanguagePieChart({ data, height = 260 }: LanguagePieChar
             borderRadius: "8px",
             color: "#fafafa",
           }}
-          formatter={(value: number) => [value, "数量"]}
+          // Recharts 的类型在不同版本下对 formatter 的 value 可能含 undefined；避免严格注解导致构建失败
+          formatter={(value) => [value ?? 0, "数量"]}
         />
         <Legend />
       </PieChart>
