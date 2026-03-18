@@ -1,115 +1,64 @@
+# 🌍 Global Vision AI: Full-Stack Intelligence Aggregator
 
-# 🌍 Global Vision: AI-Powered News Aggregator
-> **A bilingual intelligence dashboard designed for Digital Nomads & French Learners (AI-driven).**
+> **A Production-Grade Distributed System for Digital Nomads & Language Learners.**
+> **由 AI 驱动的全栈新闻情报系统，专为全球游民与跨语言学习者设计。**
 
----
-
-## 🏗️ System Architecture (Core Logic)
-
-* **View Layer (`app.py`)** Streamlit-based interactive dashboard featuring dynamic sidebars, category filtering, and real-time news rendering (responsive UI).
-
-* **Service Layer (`ai_agent.py`)** Integrated with LLM (DeepSeek/OpenAI) to perform context-aware summarization, "clickbait" filtering, and linguistic extraction (French-Chinese mapping).
-
-* **Data Layer (`data_fetcher.py`, `config.py`)** Handles RSS stream ingestion, anti-crawler strategy implementation (User-Agent spoofing), and modular source configuration.
+[![Vercel Deployment](https://img.shields.io/badge/Frontend-Vercel-black?logo=vercel)](https://global-vision-ai.vercel.app/)
+[![Hugging Face Space](https://img.shields.io/badge/Backend-Hugging_Face-ffbd45?logo=huggingface)](https://huggingface.co/spaces/maggiecycy/Global-Vision-Backend)
+[![Database](https://img.shields.io/badge/Database-Supabase-3ec98e?logo=supabase)](https://supabase.com/)
 
 ---
 
-## 🌟 Project Motivation / 项目动机
+## 🏗️ 系统架构 / System Architecture
+
+本项目采用**四层分布式架构**，实现了高性能的异步任务处理与数据持久化：
+
+* **Frontend (Next.js 14)**: 响应式仪表盘，利用 Tailwind CSS 和 Recharts 实现动态词云与精报统计看板。
+* **Backend (FastAPI)**: 异步路由服务。通过 **Supervisord** 在云端同时驱动 Web 服务、Redis 与并行爬虫。
+* **Task Queue (Celery + Redis)**: 实现定时抓取、AI 总结与邮件推送的异步解耦，确保系统高可用。
+* **Persistence (PostgreSQL/Supabase)**: 结构化数据存储，通过 **Alembic** 管理数据库迁移版本。
+
+---
+
+## 🌟 项目动机 / Project Motivation
 
 ### English
-In an era of algorithmic feeds and information overload, it is difficult to find high-quality, objective news sources, especially for those trying to master a second language (e.g., French). Traditional news aggregators focus on "engagement" rather than "value."
-
-This project was developed as an **"Information Filter."** By combining **Generative AI** with curated RSS feeds, it empowers users to reclaim control over their information diet. It bridges the gap between **Tech Insights** and **Language Acquisition**, allowing users to learn French vocabulary in the context of real-world technology and business news.
+In an era of information overload, high-quality news is often buried under noise. This project bridges the gap between **Tech Insights** and **Language Acquisition**, allowing users to consume real-world French news through an AI-powered lens.
 
 ### 中文
-在算法推荐和信息过载的时代，获取高质量、客观的新闻变得愈发困难。传统聚合器往往关注“点击率”而非“信息价值”。
-
-本项目旨在构建一个**智能信息过滤器**。通过结合 **生成式 AI** 与精选 RSS 源，它帮助用户重夺信息主动权。本项目打破了**科技视野**与**语言习得**之间的壁垒，让用户能够在真实的科技与商业新闻语境中，沉浸式地积累全球视野。
+在信息碎片化的时代，高质量情报常被噪音淹没。本项目打破了**科技视野**与**语言习得**之间的壁垒，利用生成式 AI 帮助用户在真实的法语新闻语境中沉浸式积累全球视野。
 
 ---
 
-## 🏗️ Technical Architecture / 技术架构
+## ✨ 核心功能 / Key Features
 
-The project follows a modular design pattern emphasizing **Stability & Extensibility**:
-
-* **Anti-Crawler Mechanism (`data_fetcher.py`)** Implements custom headers and session handling to bypass strict anti-scraping measures from top-tier media (e.g., *Les Echos*, *HuffPost*).
-
-* **Prompt Engineering (`config.py`)** Uses structured System Prompts to enforce JSON output, ensuring strict data formatting for downstream UI rendering.
-
-* **State Management** Streamlit session state is optimized to reduce redundant API calls during user interaction.
+* **AI-Driven Insights**: 自动对《卫报》等媒体进行深度摘要，精准去除点击诱饵。
+* **Mot du Jour**: 自动从新闻背景中识别法语核心词汇，并提供双语对照解释。
+* **Distributed Scheduling**: 每天定时执行抓取，并通过邮件推送全天情报摘要。
+* **Heartbeat Mechanism**: 通过 GitHub Actions 实现“起搏器”逻辑，确保云端服务永不掉线。
 
 ---
 
-## ✨ Key Features / 功能说明
+## 🛠️ 技术栈 / Tech Stack
 
-* **AI-Driven Summarization** Compresses lengthy articles into 50-80 word core insights, removing noise and fluff.
-
-* **Contextual French Learning (Mot du Jour)** Automatically identifies key French terms (nouns/verbs) from the news context and provides definitions.
-
-* **Dual-Track Tech News** Segregates content into "Hard Tech" (*Journal du Geek*) and "Digital Culture" (*Le Monde Pixels*) for targeted reading.
-
-* **Privacy-First Design** No local database required; all processing happens in-memory with secure API key management via Streamlit Secrets.
+| 类别 | 技术 |
+| :--- | :--- |
+| **前端** | Next.js, TypeScript, Tailwind CSS, Recharts |
+| **后端** | FastAPI, Python 3.11, Pydantic |
+| **异步/任务** | Celery, Redis, Supervisord |
+| **数据库** | PostgreSQL (Supabase), SQLAlchemy, Alembic |
+| **基础设施** | Vercel, Hugging Face, Docker, GitHub Actions |
 
 ---
 
-## 🚀 Quick Start / 快速启动指南
-
-### 1. Installation / 安装
+## 🚀 快速启动 / Quick Start
 
 ```bash
+# 克隆项目
 git clone [https://github.com/maggiecycy/Global-Vision-AI.git](https://github.com/maggiecycy/Global-Vision-AI.git)
-cd Global-Vision-AI
-pip install -r requirements.txt
 
-```
+# 安装依赖 (后端)
+cd backend && pip install -r requirements.txt
 
-### 2. Configuration / 配置
-
-Create `.env` (local) or `.streamlit/secrets.toml` (production):
-
-```toml
-# API Configuration
-API_KEY = "your_llm_api_key"
-BASE_URL = "[https://api.deepseek.com](https://api.deepseek.com)"
-
-```
-
-### 3. Run / 运行
-
-```bash
-streamlit run app.py
-
-```
-
----
-
-## 🧭 Roadmap / 未来规划
-
-* **User Mood Tracking** Recommend news based on the user's current emotional state (integrating logic from *Mood Journal*).
-* **Anki Integration** One-click export of "Mot du Jour" vocabulary to Anki flashcards.
-* **Multi-Language Support** Expanding to German and Italian sources (EU-oriented).
-
----
-
-## 🧑‍💻 Author
-
-**Maggie Cao**
-
-* Computer Science @ Beijing Technology and Business University
-* ISTJ | CS Student & Aspiring AI Developer
-
-**Focus Areas**
-
-* **Full-Stack AI Application** (Streamlit + LLM)
-* **Cross-Cultural Tech** & Language Learning Tools
-* **System Architecture** & Data Engineering
-
----
-
-## 🛡️ License
-
-MIT License
-
-```
-
-```
+# 启动前端
+cd ../frontend && npm install && npm run dev
