@@ -21,12 +21,12 @@ celery_app.conf.update(
 celery_app.conf.beat_schedule = {
     "scrape-every-12-hours": {
         "task": "app.worker.tasks.real_scrape_task",
-        "schedule": crontab(minute=0, hour="*/12"),
+        "schedule": crontab(minute=0, hour="6,18"),
         "args": ([],),
     },
     "email-every-12-hours": {
         "task": "app.worker.tasks.send_daily_digest_task",
-        "schedule": crontab(minute=10, hour="*/12"),
+        "schedule": crontab(minute=10, hour="6,18"),
         "args": (),
     },
     "cleanup-daily-at-3am": {

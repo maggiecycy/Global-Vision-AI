@@ -7,13 +7,18 @@ from app.api.endpoints.tasks import router as tasks_router
 
 app = FastAPI(title="Global Vision API")
 
-# 联调加固：仅允许前端开发源，避免生产被任意域名跨域
+# 联调加固：允许本地 + Vercel 预览/生产域名（*.vercel.app）
+# 建议修改后的 main.py 配置
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://global-vision-ai.vercel.app",  # 👈 你的生产域名
+        "https://maggiecycys-projects.vercel.app", # 备用域名
     ],
+    # 允许所有 Vercel 的预览域名
+    allow_origin_regex=r"^https://.*\.vercel\.app$", 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
