@@ -21,6 +21,10 @@ class Settings(BaseModel):
 
     RECEIVER_EMAIL: str = os.getenv("RECEIVER_EMAIL", "")
 
+    # Resend（HF 封 587，用 HTTP API 替代 SMTP）
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    RESEND_FROM: str = os.getenv("RESEND_FROM", "")  # 如 "Global Vision <onboarding@resend.dev>"
+
 
 # --- Final Source Update: 黄金清单 RSS 源 ---
 RSS_SOURCES = [

@@ -5,7 +5,34 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 from html import escape
 
+import httpx
 from app.core.config import settings
+
+
+def _send_via_resend(receiver_email: str, subject: str, body_text: str, html_body: str) -> None:
+    """通过 Resend HTTP API 发送（HF 环境 SMTP 被封时使用）"""
+    api_key = settings.RESEND_API_KEY
+    if not api_key:
+        raise RuntimeError("RESEND_API_KEY is not configured")
+    from_header = settings.RESEND_FROM or (f"Global Vision <{settings.SMTP_USER}>" if settings.SMTP_USER else "Global Vision <onboarding@resend.dev>")
+
+    resp = httpx.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": from_header,
+            "to": [receiver_email],
+            "subject": subject,
+            "text": body_text,
+            "html": html_body,
+        },
+        timeout=20.0,
+    )
+    if resp.status_code >= 400:
+        raise RuntimeError(f"Resend API error: {resp.status_code} {resp.text}")
 
 
 def send_brief_email(
@@ -16,16 +43,18 @@ def send_brief_email(
 ) -> None:
     """
     发送简报邮件（极简黑白报刊风 HTML + 纯文本 fallback）。
-    依赖环境变量：SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS。
+    - 若 RESEND_API_KEY 已设置：走 Resend HTTP API（HF 等 SMTP 被封环境）
+    - 否则：走 SMTP（本地 / 自托管）
     """
-    if not settings.SMTP_HOST:
-        raise RuntimeError("SMTP_HOST is not configured")
-    if not settings.SMTP_USER:
-        raise RuntimeError("SMTP_USER is not configured")
-    if not settings.SMTP_PASS:
-        raise RuntimeError("SMTP_PASS is not configured")
     if not receiver_email:
         raise RuntimeError("receiver_email is empty")
+    use_resend = bool(settings.RESEND_API_KEY)
+    if use_resend:
+        if not settings.SMTP_USER:
+            raise RuntimeError("使用 Resend 时需设置 SMTP_USER 作为发件人邮箱（或在 Resend 后台验证域名后改为 RESEND_FROM）")
+    else:
+        if not settings.SMTP_HOST or not settings.SMTP_USER or not settings.SMTP_PASS:
+            raise RuntimeError("SMTP 未配置，或设置 RESEND_API_KEY 使用 Resend")
 
     today_str = datetime.now().strftime("%B %d, %Y")
     items = items or []
@@ -80,6 +109,10 @@ def send_brief_email(
   </body>
 </html>
 """.strip()
+
+    if use_resend:
+        _send_via_resend(receiver_email, subject, body_text, html_template)
+        return
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject

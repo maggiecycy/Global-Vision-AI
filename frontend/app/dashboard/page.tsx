@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { apiGet, apiRequest } from "@/lib/api";
 import CategorySelector from "@/components/CategorySelector";
+import MoodScoreBadge from "@/components/MoodScoreBadge";
 
 interface Article {
   id: number;
@@ -38,6 +39,7 @@ const formatTime = (isoString: string) => {
 };
 
 function ArticleCard({ article }: { article: Article }) {
+  const score = article.ai_result?.sentiment_score;
   const titleEl = (
     <h3 className="text-lg font-medium text-zinc-900 leading-snug group-hover:text-blue-600 transition-colors flex items-center gap-2">
       {article.url ? (
@@ -47,6 +49,7 @@ function ArticleCard({ article }: { article: Article }) {
       ) : (
         <span>{article.title_en}</span>
       )}
+      <MoodScoreBadge score={score} />
     </h3>
   );
   return (
